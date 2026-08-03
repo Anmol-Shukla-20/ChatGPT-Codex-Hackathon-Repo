@@ -51,7 +51,7 @@ export async function extractTextFromFile(file: File) {
     await worker.load();
     await worker.loadLanguage("eng");
     await worker.initialize("eng");
-    const { data } = await worker.recognize(file as any);
+    const { data } = await worker.recognize(file);
     await worker.terminate();
     return data?.text ?? "";
   } catch (err) {

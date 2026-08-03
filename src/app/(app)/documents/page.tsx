@@ -106,7 +106,7 @@ export default function DocumentsPage() {
               family_size: 0,
             };
             const merged = { ...existing, ...parsed };
-            await saveProfile(user.id, merged as any);
+            await saveProfile(user.id, merged);
             toast.success("Profile autofilled from uploaded document.");
           }
         }

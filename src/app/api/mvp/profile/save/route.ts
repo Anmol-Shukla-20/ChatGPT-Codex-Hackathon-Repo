@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+type ProfilePayload = Record<string, string | number | null | undefined>;
+
 export async function POST(request: Request) {
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE;
@@ -12,7 +14,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const profile = body.profile as Record<string, any>;
+    const profile = body.profile as ProfilePayload;
 
     const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -20,11 +22,11 @@ export async function POST(request: Request) {
     if (uErr || !userData?.user) return NextResponse.json({ ok: false, error: "Invalid token" }, { status: 401 });
     const user = userData.user;
 
-    const payload = { ...profile, user_id: user.id, updated_at: new Date().toISOString() } as any;
+    const payload: ProfilePayload = { ...profile, user_id: user.id, updated_at: new Date().toISOString() };
     const { data, error } = await supabase.from("profiles").upsert(payload).select().single();
     if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     return NextResponse.json({ ok: true, profile: data });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

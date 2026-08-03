@@ -22,10 +22,10 @@ export default function ChatPage() {
         if (supabase && user?.id) {
           const { data } = await supabase.from("chat_history").select("*").eq("user_id", user.id).order("created_at", { ascending: true });
           if (data && data.length) {
-            const msgs: Message[] = data.flatMap((row: any) => {
+            const msgs: Message[] = data.flatMap((row: { messages?: Message[] | string }) => {
               const raw = row.messages ?? [];
               const arr = typeof raw === "string" ? JSON.parse(raw) : raw;
-              return (arr || []).map((m: any) => ({ id: m.id, role: m.role, text: m.text, time: m.time }));
+              return (arr || []).map((m: Message) => ({ id: m.id, role: m.role, text: m.text, time: m.time }));
             });
             setMessages(msgs);
             return;

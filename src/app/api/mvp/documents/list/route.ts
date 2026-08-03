@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 
+type DocumentRow = {
+  id: string;
+  file_url: string | null;
+  storage_path: string | null;
+  [key: string]: unknown;
+};
+
 export async function GET(request: Request) {
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE;
@@ -22,8 +29,8 @@ export async function GET(request: Request) {
 
     // Ensure signed URLs for private storage
     try {
-      const docs = data || [];
-      const docsWithUrls = await Promise.all(docs.map(async (doc: any) => {
+      const docs = (data || []) as DocumentRow[];
+      const docsWithUrls = await Promise.all(docs.map(async (doc) => {
         if (!doc.file_url && doc.storage_path) {
           const { data: signed } = await supabase.storage.from("documents").createSignedUrl(doc.storage_path, 60 * 60);
           if (signed?.signedUrl) doc.file_url = signed.signedUrl;
@@ -34,7 +41,7 @@ export async function GET(request: Request) {
     } catch (e) {
       return NextResponse.json({ ok: true, documents: data });
     }
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

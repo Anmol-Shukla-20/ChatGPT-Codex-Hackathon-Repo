@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ ok: true, document: data, signedUrl: signed?.signedUrl ?? null });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

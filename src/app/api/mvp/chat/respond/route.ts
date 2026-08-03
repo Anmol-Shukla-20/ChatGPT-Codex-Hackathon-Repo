@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 
+type SchemeSummary = {
+  id: string;
+  title: string;
+  state: string;
+  category: string;
+  officialLink: string | null;
+};
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { message, context } = body as { message: string; context?: any };
+    const { message, context } = body as { message: string; context?: Record<string, unknown> };
 
     const GROK_KEY = process.env.GROK_API_KEY;
     if (!GROK_KEY) {
@@ -13,14 +21,21 @@ export async function POST(request: Request) {
     // Example Grok call - adapt endpoint to the provider's API
     try {
       // Load scheme catalog to provide focused context
-      let schemesSummary = [];
+      const schemesSummary: SchemeSummary[] = [];
       try {
         const fs = await import("fs");
         const path = await import("path");
         const dataPath = path.join(process.cwd(), "data", "government_schemes.json");
         const raw = fs.readFileSync(dataPath, "utf8");
-        const parsed = JSON.parse(raw);
-        schemesSummary = (parsed || []).slice(0, 200).map((s: any) => ({ id: s.id, title: s.title || s.name || s.id, state: s.state, category: s.category, officialLink: s.officialLink || s.official_apply_url || s.official_scheme_url }));
+        const parsed = JSON.parse(raw) as Array<Record<string, unknown>>;
+        const nextSchemes = parsed.slice(0, 200).map((scheme) => ({
+          id: String(scheme.id ?? ""),
+          title: String(scheme.title ?? scheme.name ?? scheme.id ?? ""),
+          state: String(scheme.state ?? "All"),
+          category: String(scheme.category ?? "General"),
+          officialLink: String(scheme.officialLink ?? scheme.official_apply_url ?? scheme.official_scheme_url ?? "") || null,
+        }));
+        schemesSummary.push(...nextSchemes);
       } catch {
         schemesSummary = [];
       }
@@ -47,10 +62,10 @@ export async function POST(request: Request) {
       else text = JSON.stringify(data);
 
       return NextResponse.json({ text });
-    } catch (err) {
+    } catch {
       return NextResponse.json({ text: "Error contacting Grok: fallback message — please try again later." }, { status: 502 });
     }
-  } catch (err) {
+  } catch {
     return NextResponse.json({ text: "Invalid request" }, { status: 400 });
   }
 }
