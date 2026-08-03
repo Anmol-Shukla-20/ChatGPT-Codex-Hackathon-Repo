@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BharatSetu AI Scheme Catalog",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "title",
+      "category",
+      "level",
+      "description",
+      "benefits",
+      "required_documents",
+      "eligibility",
+      "tags"
+    ],
+    "properties": {
+      "id": { "type": "string" },
+      "title": { "type": "string" },
+      "category": { "type": "string" },
+      "level": { "type": "string", "enum": ["Central", "State"] },
+      "state_scope": { "type": "array", "items": { "type": "string" } },
+      "description": { "type": "string" },
+      "benefits": { "type": "array", "items": { "type": "string" } },
+      "required_documents": { "type": "array", "items": { "type": "string" } },
+      "eligibility": {
+        "type": "object",
+        "properties": {
+          "minAge": { "type": "number" },
+          "maxAge": { "type": "number" },
+          "maxAnnualIncome": { "type": "number" },
+          "categories": { "type": "array", "items": { "type": "string" } },
+          "occupations": { "type": "array", "items": { "type": "string" } },
+          "disabilityRequired": { "type": "boolean" },
+          "educationMin": { "type": "string" },
+          "familySizeMin": { "type": "number" },
+          "states": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "tags": { "type": "array", "items": { "type": "string" } }
+    }
+  }
+}
