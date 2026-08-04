@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         schemesSummary = [];
       }
 
-        const GROK_ENDPOINT = process.env.GROK_API_ENDPOINT || "https://api.x.ai/v1/chat/completions";
+        const GROK_ENDPOINT = process.env.GROK_API_ENDPOINT || "https://api.groq.com/openai/v1/chat/completions";
         const systemPrompt = `You are an AI assistant helping users with government schemes in India. You have access to the following schemes summary:\n${JSON.stringify(schemesSummary).substring(0, 15000)}\nAnswer the user's questions based on these schemes.`;
         const resp = await fetch(GROK_ENDPOINT, {
           method: "POST",
