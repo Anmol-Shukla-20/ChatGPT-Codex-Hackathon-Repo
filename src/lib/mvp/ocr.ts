@@ -1,4 +1,3 @@
-import type { Partial } from "@/lib/mvp/types";
 import type { CitizenProfile } from "@/lib/mvp/types";
 
 export function parseProfileFromText(text: string): Partial<CitizenProfile> {
