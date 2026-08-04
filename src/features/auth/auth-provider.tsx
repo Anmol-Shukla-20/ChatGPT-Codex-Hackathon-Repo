@@ -40,9 +40,9 @@ export function AuthProvider({
 
     return () => listener.subscription.unsubscribe();
   }, [router, supabase]);
-
+  
   const signInWithGoogle = async () => {
-    const redirectTo = `${window.location.origin}/dashboard`;
+    const redirectTo = `${window.location.origin}/api/auth/callback?next=/dashboard`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },
