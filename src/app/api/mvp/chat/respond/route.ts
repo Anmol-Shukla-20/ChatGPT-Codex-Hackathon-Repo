@@ -46,7 +46,7 @@ export async function POST(request: Request) {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${GROK_KEY}` },
           body: JSON.stringify({
-            model: "grok-2-latest",
+            model: "llama-3.1-8b-instant",
             messages: [
               { role: "system", content: systemPrompt },
               { role: "user", content: message }
