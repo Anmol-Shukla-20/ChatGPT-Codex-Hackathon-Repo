@@ -88,7 +88,22 @@ export type SchemeRecommendation = {
   last_updated?: string;
   state?: string;
   scheme_type?: "Central" | "State";
+
+  // Added...
   eligibility_rules?: string;
+  tags?: string[];
+  eligibility?: {
+    minAge?: number;
+    maxAge?: number;
+    maxAnnualIncome?: number;
+    categories?: string[];
+    occupations?: string[];
+    disabilityRequired?: boolean;
+    educationMin?: string;
+    familySizeMin?: number;
+    states?: string[];
+  };
+  
 };
 
 export type RecentActivity = {
