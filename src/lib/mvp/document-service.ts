@@ -47,10 +47,7 @@ export async function extractTextFromFile(file: File) {
   if (!file.type.startsWith("image/")) return "";
   try {
     const { createWorker } = await import("tesseract.js");
-    const worker = createWorker();
-    await worker.load();
-    await worker.loadLanguage("eng");
-    await worker.initialize("eng");
+    const worker = await createWorker("eng");
     const { data } = await worker.recognize(file);
     await worker.terminate();
     return data?.text ?? "";
