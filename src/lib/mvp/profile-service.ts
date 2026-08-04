@@ -18,7 +18,7 @@ export function validateProfile(profile: CitizenProfile) {
   };
 }
 
-async function getAuthHeader() {
+async function getAuthHeader(): Promise<Record<string, string>> {
   try {
     const client = createSupabaseBrowserClient();
     const { data } = await client.auth.getSession();
