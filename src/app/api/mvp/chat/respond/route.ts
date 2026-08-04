@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     // Example Grok call - adapt endpoint to the provider's API
     try {
       // Load scheme catalog to provide focused context
-      const schemesSummary: SchemeSummary[] = [];
+      let schemesSummary: SchemeSummary[] = [];
       try {
         const fs = await import("fs");
         const path = await import("path");
