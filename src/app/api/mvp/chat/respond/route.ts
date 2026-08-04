@@ -40,11 +40,18 @@ export async function POST(request: Request) {
         schemesSummary = [];
       }
 
-        const GROK_ENDPOINT = process.env.GROK_API_ENDPOINT || "https://api.grok.ai/v1/respond";
+        const GROK_ENDPOINT = process.env.GROK_API_ENDPOINT || "https://api.x.ai/v1/chat/completions";
+        const systemPrompt = `You are an AI assistant helping users with government schemes in India. You have access to the following schemes summary:\n${JSON.stringify(schemesSummary).substring(0, 15000)}\nAnswer the user's questions based on these schemes.`;
         const resp = await fetch(GROK_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${GROK_KEY}` },
-          body: JSON.stringify({ input: message, context: { ...(context || {}), schemes: schemesSummary } }),
+          body: JSON.stringify({
+            model: "grok-2-latest",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: message }
+            ]
+          }),
         });
       if (!resp.ok) {
         const text = await resp.text();
@@ -53,13 +60,11 @@ export async function POST(request: Request) {
       const data = await resp.json().catch(() => null);
       // robust normalization for possible provider response shapes
       let text = "";
-      if (!data) text = "";
-      else if (typeof data === "string") text = data;
-      else if (data.output && typeof data.output === "string") text = data.output;
-      else if (data.text && typeof data.text === "string") text = data.text;
-      else if (Array.isArray(data) && data[0] && (data[0].text || data[0].content)) text = data[0].text ?? data[0].content ?? "";
-      else if (data.message && data.message.content) text = data.message.content;
-      else text = JSON.stringify(data);
+      if (data?.choices?.[0]?.message?.content) {
+        text = data.choices[0].message.content;
+      } else {
+        text = JSON.stringify(data);
+      }
 
       return NextResponse.json({ text });
     } catch {
