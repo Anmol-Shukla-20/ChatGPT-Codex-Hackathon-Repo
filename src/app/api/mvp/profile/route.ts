@@ -9,13 +9,13 @@ export async function GET(request: Request) {
   try {
     const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
-    const userId = request.nextUrl.searchParams.get("userId");
+    const userId = new URL(request.url).searchParams.get("userId");
 
     const query = supabase.from("profiles").select("*");
     const { data, error } = userId ? await query.eq("user_id", userId).maybeSingle() : await query.is("user_id", null).maybeSingle();
     if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     return NextResponse.json({ ok: true, profile: data });
   } catch (err: unknown) {
-    return NextResponse.json({ ok: false, error: String(err?.message ?? err) }, { status: 500 });
+    return NextResponse.json({ ok: false, error: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }
