@@ -81,8 +81,8 @@ export function loadSchemeCatalog(): SchemeCatalogItem[] {
       tags: [(record.category ?? "").toLowerCase(), ((Array.isArray(record.eligibility?.occupation) ? record.eligibility.occupation.join(" ") : record.occupation ?? "")).toString().toLowerCase()],
       state: record.state ?? "All",
       scheme_type: record.state === "All" ? "Central" : "State",
-      official_apply_url: record.officialLink ?? record.official_apply_url ?? record.official_scheme_url ?? null,
-      official_scheme_url: record.official_scheme_url ?? record.officialLink ?? null,
+      official_apply_url: record.officialLink ?? record.official_apply_url ?? record.official_scheme_url ?? undefined,
+      official_scheme_url: record.official_scheme_url ?? record.officialLink ?? undefined,
       last_updated: record.last_updated ?? new Date().toISOString().slice(0, 10),
       eligibility_rules: record.eligibility ? JSON.stringify(record.eligibility) : "",
     }));
