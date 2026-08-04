@@ -125,6 +125,8 @@ export async function getRecommendations(profile: CitizenProfile | null, documen
         state: scheme.state,
         scheme_type: scheme.scheme_type,
         eligibility_rules: scheme.eligibility_rules,
+        tags: scheme.tags,
+        eligibility: scheme.eligibility,
       };
     })
     .sort((a, b) => b.eligibility_score - a.eligibility_score);
